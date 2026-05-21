@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pitch Trajectory Analyzer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <p class="eyebrow">Browser-based baseball pitch analysis</p>
+      <h1>Pitch Trajectory Analyzer</h1>
+      <p class="desc">투구 영상을 업로드하면 공의 궤적, 예상 구속, 구종 추정값을 분석합니다. 모든 분석은 브라우저 안에서만 실행됩니다.</p>
+    </section>
+
+    <section class="panel upload-panel">
+      <label class="file-drop" for="videoInput">
+        <input id="videoInput" type="file" accept="video/*" />
+        <span class="file-title">투구 영상 선택</span>
+        <span id="fileName" class="file-name">MP4, MOV 등 브라우저에서 재생 가능한 영상</span>
+      </label>
+
+      <div class="settings-grid">
+        <label>
+          <span>투수판-홈플레이트 거리</span>
+          <input id="distanceInput" type="number" min="10" max="25" step="0.01" value="18.44" />
+          <small>m / 표준 18.44m</small>
+        </label>
+        <label>
+          <span>분석 FPS</span>
+          <input id="fpsInput" type="number" min="15" max="60" step="1" value="30" />
+          <small>영상이 짧을수록 30 권장</small>
+        </label>
+        <label>
+          <span>검출 민감도</span>
+          <input id="sensitivityInput" type="range" min="1" max="10" step="1" value="6" />
+          <small>높을수록 작은 움직임까지 검출</small>
+        </label>
+      </div>
+
+      <div class="button-row">
+        <button id="analyzeBtn" class="primary" disabled>Analyze</button>
+        <button id="resetBtn" type="button">Reset</button>
+      </div>
+      <p id="status" class="status">영상을 선택하면 분석을 시작할 수 있습니다.</p>
+    </section>
+
+    <section class="viewer-wrap">
+      <div class="viewer" id="viewer">
+        <video id="video" playsinline controls></video>
+        <canvas id="overlay"></canvas>
+      </div>
+    </section>
+
+    <section class="result-grid">
+      <article class="result-card">
+        <span>예상 구속</span>
+        <strong id="speedResult">-</strong>
+        <small id="speedDetail">km/h</small>
+      </article>
+      <article class="result-card">
+        <span>구종 추정</span>
+        <strong id="pitchResult">-</strong>
+        <small id="pitchDetail">궤적 기반 추정</small>
+      </article>
+      <article class="result-card">
+        <span>추적 프레임</span>
+        <strong id="frameResult">-</strong>
+        <small>ball track frames</small>
+      </article>
+      <article class="result-card">
+        <span>궤적 변화</span>
+        <strong id="breakResult">-</strong>
+        <small>상하 / 좌우 px</small>
+      </article>
+    </section>
+
+    <section class="panel note-panel">
+      <h2>판정 방식</h2>
+      <p>프레임 간 차이와 밝기 정보를 이용해 움직이는 작은 흰색 물체를 추적합니다. 구속은 추적된 공의 비행 시간과 표준 거리 18.44m를 기준으로 계산합니다. 구종은 속도, 낙차, 좌우 변화량을 이용한 추정값입니다.</p>
+      <p class="warning">주의: 단일 카메라 영상만으로는 회전수, 실제 3D 무브먼트, 정확한 구종을 확정할 수 없습니다. 카메라 각도, 셔터스피드, 프레임레이트, 공 가림 여부에 따라 결과가 흔들릴 수 있습니다.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
